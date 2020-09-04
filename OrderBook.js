@@ -1,36 +1,70 @@
-let orders = [];
+function OrderBook(orders){
+    this.orders = orders;
 
-function OrderBook(){
     this.addOpenOrder = function(side , price){
+        if (side !== 'BUY' && side !== 'SELL'){
+            throw 'Invalid side parameter';
+        }
+        if (!Number.isInteger(price) || price < 0){
+            throw 'Invalid side parameter';
+        }
+
         let order = {};
-        let orderId = orders.length + 1;
+        let orderId = this.orders[this.orders.length - 1].orderId + 1;
         order.orderId = orderId;
         order.side = side;
         order.price = price;
-        orders.push(order);
+        // write to datastore
+        this.orders.push(order);
+
         return orderId;
     }
+
     this.deleteOpenOrder = function(orderId){
-        for (var i = 0; i < orders.length;i++){
-            if (orders[i].orderId === orderId){
-                orders.splice(i, 1);
+        if (!Number.isInteger(orderId) || orderId < 0){
+            throw 'Invalid side parameter';
+        }
+        let status = undefined;
+        for (var i = 0; i < this.orders.length;i++){
+            if (this.orders[i].orderId === orderId){
+                // delete from datastore
+                this.orders.splice(i, 1);
+                status = true
             }
         }
+        return status;
     }
+
     this.bestOpenOrder = function(side){
-        let price = 0;
-        let bestOpenOrder = null;
-        if (side === 'buy'){
-            for (order of orders){
-                if (order.price > price){
-                    bestOpenOrder = order;
-                } 
-            }
-        } else {
-
+        if (side !== 'BUY' && side !== 'SELL') {
+            throw 'Invalid side parameter';
         }
+        let bestOpenOrder = null;
+        let price = (side === 'BUY') ? 0.00 : Number.MAX_SAFE_INTEGER;
+        for (order of this.orders) {  
+            if (side === 'BUY') {
+                if (order.side === 'BUY' && (order.price > price || order.price === price)) {
+                    price = order.price;
+                    bestOpenOrder = {...order};
+                }
+            } else {
+                if (order.side === 'SELL' && (order.price < price || order.price === price)) {
+                    price = order.price;
+                    bestOpenOrder = {...order};
+                }
+            }
+        }
+        return bestOpenOrder;
     }
-    this.executeBestOpenOrder = function(side){
 
+    this.executeBestOpenOrder = function(side){
+        if (side !== 'BUY' && side !== 'SELL') {
+            throw 'Invalid side parameter';
+        }
+        let bestOpenOrder = this.bestOpenOrder(side);
+        this.deleteOpenOrder(bestOpenOrder.orderId);
+        return bestOpenOrder;
     }
 }
+
+module.exports = OrderBook;
