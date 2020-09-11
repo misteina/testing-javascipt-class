@@ -1,1 +1,1 @@
-# remotech-challenge
+# solution1 completed
