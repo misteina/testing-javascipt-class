@@ -18,7 +18,6 @@ class OrderBook {
         order.orderId = orderId;
         order.side = side;
         order.price = price;
-        // write to datastore
         this.orders.push(order);
 
         return orderId;
@@ -31,7 +30,6 @@ class OrderBook {
         let status = undefined;
         for (var i = 0; i < this.orders.length;i++){
             if (this.orders[i].orderId === orderId){
-                // delete from datastore
                 this.orders.splice(i, 1);
                 status = true
             }
