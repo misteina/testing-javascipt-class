@@ -1,1 +1,1 @@
-# solution1 completed
+## Testing a Javascript class
