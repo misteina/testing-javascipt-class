@@ -1,7 +1,11 @@
-function OrderBook(orders){
-    this.orders = orders;
+"use strict";
 
-    this.addOpenOrder = function(side , price){
+class OrderBook {
+    constructor (orders){
+        this.orders = orders;
+    }
+
+    addOpenOrder(side , price){
         if (side !== 'BUY' && side !== 'SELL'){
             throw 'Invalid side parameter';
         }
@@ -20,7 +24,7 @@ function OrderBook(orders){
         return orderId;
     }
 
-    this.deleteOpenOrder = function(orderId){
+    deleteOpenOrder(orderId){
         if (!Number.isInteger(orderId) || orderId < 0){
             throw 'Invalid side parameter';
         }
@@ -35,12 +39,13 @@ function OrderBook(orders){
         return status;
     }
 
-    this.bestOpenOrder = function(side){
+    bestOpenOrder(side){
         if (side !== 'BUY' && side !== 'SELL') {
             throw 'Invalid side parameter';
         }
         let bestOpenOrder = null;
         let price = (side === 'BUY') ? 0.00 : Number.MAX_SAFE_INTEGER;
+        let order;
         for (order of this.orders) {  
             if (side === 'BUY') {
                 if (order.side === 'BUY' && (order.price > price || order.price === price)) {
@@ -57,7 +62,7 @@ function OrderBook(orders){
         return bestOpenOrder;
     }
 
-    this.executeBestOpenOrder = function(side){
+    executeBestOpenOrder(side){
         if (side !== 'BUY' && side !== 'SELL') {
             throw 'Invalid side parameter';
         }
